@@ -4,7 +4,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class CustomSecurity {
-    public String encSHA256(String text) {
+    public static String encSHA256(String text) {
         StringBuffer buf = new StringBuffer();
         MessageDigest mDigest;
 

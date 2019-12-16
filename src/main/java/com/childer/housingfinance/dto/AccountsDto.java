@@ -9,27 +9,17 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class AccountsDto extends BaseAccountDto {
+public class AccountsDto {
+    private String id;
     private String password;
-
-    public String GetPasswordByEnc(){
-        return new CustomSecurity().encSHA256(this.password);
-    }
+    private String name;
 
     public Accounts toEntity() {
         return Accounts.builder()
-                .id(super.getId())
-                .name(super.getName())
+                .id(this.id)
+                .name(this.name)
                 //.password(password)
-                .password(new CustomSecurity().encSHA256(password))
+                .password(CustomSecurity.encSHA256(this.password))
                 .build();
     }
-/*
-    public Accounts toEntityWithPasswordEnc() {
-        return Accounts.builder()
-                .id(id)
-                .password(new CustomSecurity().encSHA256(password))
-                .build();
-    }
-*/
 }
