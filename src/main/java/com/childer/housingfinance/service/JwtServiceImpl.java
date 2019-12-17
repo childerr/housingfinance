@@ -6,6 +6,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -28,7 +29,7 @@ public class JwtServiceImpl implements JwtService {
 
     private static final SignatureAlgorithm SIGNATUREALGORITHM = SignatureAlgorithm.HS256;
     @Override
-    public void GenerateToken(Map<String, Object> data){
+    public void generateToken(Map<String, Object> data){
         Claims claims = Jwts.claims().setSubject(data.get("id").toString());
         claims.putAll(data);
         Date now = new Date();
@@ -47,11 +48,33 @@ public class JwtServiceImpl implements JwtService {
     public Map<String, Object> getToken() {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         String token = request.getHeader("Authorization");
+        String tokenWithoutBearer = token.replaceFirst("(?i)bearer\\s?token\\s?(.+)", "$1");
 
-        Claims claims = Jwts.parser()
-                                .setSigningKey(this.generateKey())
-                                .parseClaimsJws(token).getBody();
+        Claims claims = null;
+
+        if(!token.isEmpty()) {
+            claims = Jwts.parser()
+                    .setSigningKey(this.generateKey())
+                    .parseClaimsJws(token).getBody();
+            if(!claims.getExpiration().before(new Date()) && !token.equals(tokenWithoutBearer)){
+                generateToken(claims);
+            }
+        }
         return claims;
+    }
+
+    @Override
+    public boolean validateToken() {
+        boolean result = false;
+        try {
+            Claims claims = (Claims)getToken();
+            if(claims != null) {
+                result = claims.getExpiration().before(new Date());
+            }
+        } catch (Exception e) {
+
+        }
+        return result;
     }
 
     private Key generateKey(){

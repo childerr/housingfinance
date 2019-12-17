@@ -36,10 +36,10 @@ public class AccountsController {
         accountsService.SignIn(id, password);
     }
 
-    @ResponseBody
-    @GetMapping("/account/validatetoken")
-    public AccountsVo findAccounts()
-            throws Exception{
-        return accountsService.getAccountInfo();
-    }
+//    @ResponseBody
+//    @GetMapping("/account/validatetoken")
+//    public AccountsVo findAccounts()
+//            throws Exception{
+//        //return accountsService.getAccountInfo();
+//    }
 }

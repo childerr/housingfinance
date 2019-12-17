@@ -33,7 +33,7 @@ public class AccountsServiceImpl implements AccountsService {
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("id",accountsDto.getId());
         data.put("name",accountsDto.getName());
-        jwtService.GenerateToken(data);
+        jwtService.generateToken(data);
     }
 
     @Override
@@ -51,15 +51,13 @@ public class AccountsServiceImpl implements AccountsService {
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("id", accounts.getId());
         data.put("name", accounts.getName());
-        jwtService.GenerateToken(data);
+        jwtService.generateToken(data);
     }
 
     @Override
-    public AccountsVo getAccountInfo()
+    public AccountsVo getAccountInfo(String id)
             throws Exception {
-        Map<String, Object> data = jwtService.getToken();
-        String id   = data.get("id").toString();
-        String name = data.get("name").toString();
-        return new AccountsVo(id, name);
+        AccountsVo accountsVo = accountsRepo.findAccountsById(id).orElseThrow(EntityNotFoundException::new);
+        return accountsVo;
     }
 }
