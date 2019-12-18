@@ -138,5 +138,39 @@ public class FinancialsServiceImpl implements FinancialsService{
         return new PredictionFinancialVo(bank, predictionFinancialDto.getYear(), predictionFinancialDto.getMonth(), predictionAmount);
     }
 
+    @Override
+    public PredictionFinancialVo predictionFinancialNew(PredictionFinancialDto predictionFinancialDto)
+            throws Exception {
+        Institutions institutions = institutionsRepo.findByName(predictionFinancialDto.getBank()).get();
+        List<Financials> financials = financialsRepo.findAllByInstitutionsCodeOrderByYearAscMonthAsc(institutions.getCode());
 
+        //최소제곱법(OLS; Ordinary Least Squares)
+        //Y평균 = 기울기 * X평균 + Y절편
+
+        Double averageX = (financials.size() + 1) / 2d;
+        Double averageY = financials.stream().collect(summingInt(Financials::getAmount)).doubleValue() / financials.size();
+
+        Double inclinationNumerator = 0d;
+        Double inclinationdenominator = 0d;
+        int i = 1;
+        for(Financials financial : financials){
+            Double x = (i - averageX);
+            inclinationdenominator += x * (financial.getAmount() - averageY);
+            inclinationNumerator += Math.pow(x, 2);
+            i++;
+        }
+
+        Double predictionInclination = inclinationdenominator / inclinationNumerator;
+        Double interceptY = averageY - (predictionInclination * averageX);
+
+        Financials minFinancials = financials.get(0);
+        short minYear = minFinancials.getYear();
+        byte minMonth = minFinancials.getMonth();
+        String bank = minFinancials.getInstitutions().getCode();
+
+        short totalMonth = (short)(((predictionFinancialDto.getYear() - minYear) * 12) + (predictionFinancialDto.getMonth() - minMonth) + 1);
+        int predictionAmount = (int)((predictionInclination * totalMonth) + interceptY);
+
+        return new PredictionFinancialVo(bank, predictionFinancialDto.getYear(), predictionFinancialDto.getMonth(), predictionAmount);
+    }
 }

@@ -63,4 +63,12 @@ public class FinancialsController {
         predictionFinancialDto.setYear((short)2018);
         return financialsService.predictionFinancial(predictionFinancialDto);
     }
+
+    @GetMapping("/financial/predictionfinancialnew")
+    @ResponseBody
+    public PredictionFinancialVo getPredictionFinancialNew(@RequestBody PredictionFinancialDto predictionFinancialDto)
+            throws Exception{
+        predictionFinancialDto.setYear((short)2018);
+        return financialsService.predictionFinancialNew(predictionFinancialDto);
+    }
 }

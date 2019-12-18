@@ -17,4 +17,4 @@ spring:
 jwt:
   security:
     key: QmxhY2tKYWNrQmxhY2tQbGF5aW5nQUJsYWNrSmFja1doaWxlUGxheWluZ0JsYWNrSmFja1dpdGhKYWNrQmxhY2s=
-    expire: 18000000
+    expire: 1800000

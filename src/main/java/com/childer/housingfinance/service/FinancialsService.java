@@ -18,4 +18,6 @@ public interface FinancialsService {
     MinMaxSupplyFinantialVo getMinMaxSupplyFinancialByInstitutionCode(String institutionCode) throws Exception;
 
     PredictionFinancialVo predictionFinancial(PredictionFinancialDto predictionFinancialDto) throws  Exception;
+
+    PredictionFinancialVo predictionFinancialNew(PredictionFinancialDto predictionFinancialDto) throws  Exception;
 }
