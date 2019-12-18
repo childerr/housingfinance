@@ -7,7 +7,6 @@ import com.childer.housingfinance.repository.AccountsRepo;
 import com.childer.housingfinance.repository.FinancialsRepo;
 import com.childer.housingfinance.repository.InstitutionsRepo;
 import com.childer.housingfinance.util.CustomSecurity;
-import jdk.internal.module.Resources;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -21,32 +20,30 @@ import java.util.List;
 public class DataLoader implements ApplicationRunner {
     private InstitutionsRepo institutionsRepo;
     private FinancialsRepo financialsRepo;
+    private AccountsRepo accountsRepo;
 
-    public DataLoader(InstitutionsRepo institutionsRepo, FinancialsRepo financialsRepo) {
+    public DataLoader(InstitutionsRepo institutionsRepo, FinancialsRepo financialsRepo,AccountsRepo accountsRepo) {
         this.institutionsRepo = institutionsRepo;
         this.financialsRepo = financialsRepo;
+        this.accountsRepo = accountsRepo;
     }
 
     public void run(ApplicationArguments args) {
-        //userRepository.save(new User("lala", "lala", "lala"));
         Accounts accounts = Accounts.builder().id("childer").name("박영상").password(CustomSecurity.encSHA256("1234")).build();
 
-
         List<Institutions> institutions = Arrays.asList(
-                Institutions.builder().code("fine2726").name("주택도시기금").build()
+                Institutions.builder().code("bank3716").name("주택도시기금").build()
             ,   Institutions.builder().code("bank3726").name("국민은행").build()
-            ,   Institutions.builder().code("bank4726").name("우리은행").build()
-            ,   Institutions.builder().code("bank5726").name("신한은행").build()
-            ,   Institutions.builder().code("bank6726").name("한국시티은행").build()
-            ,   Institutions.builder().code("bank7726").name("하나은행").build()
-            ,   Institutions.builder().code("bank8726").name("농협/수협은행").build()
-            ,   Institutions.builder().code("bank9726").name("외환은행").build()
-            ,   Institutions.builder().code("bank1726").name("기타은행").build()
+            ,   Institutions.builder().code("bank3736").name("우리은행").build()
+            ,   Institutions.builder().code("bank3746").name("신한은행").build()
+            ,   Institutions.builder().code("bank3756").name("한국시티은행").build()
+            ,   Institutions.builder().code("bank3766").name("하나은행").build()
+            ,   Institutions.builder().code("bank3776").name("농협/수협은행").build()
+            ,   Institutions.builder().code("bank3786").name("외환은행").build()
+            ,   Institutions.builder().code("bank3796").name("기타은행").build()
 
 
         );
-
-        institutionsRepo.saveAll(institutions);
 
         List<List<String>> records = new ArrayList<>();
 
@@ -68,18 +65,23 @@ public class DataLoader implements ApplicationRunner {
 
         }
 
-        for (List<String> record : records){
-            Financials.builder()
-                    .year(Short.parseShort(record.get(0))).
+        List<Financials> financials = new ArrayList<>();
+        for (List<String> record : records.subList(1,records.size())){
+            int i = 0;
+            for(Institutions institution : institutions){
+                financials.add(
+                        Financials.builder()
+                        .year(Short.parseShort(record.get(0)))
+                        .month(Byte.parseByte(record.get(1)))
+                        .amount(Integer.parseInt(record.get(2+(i++))))
+                        .institutions(institution)
+                        .build()
+                );
+            }
         }
 
-//        records.remove(0).forEach(x->{
-//            records.get(x).forEach(y->);
-//            Financials.builder().year(Integer.getInteger(x[0]))
-//        });
-
-        List<Financials> financials = new ArrayList<>();
-
-
+        accountsRepo.save(accounts);
+        institutionsRepo.saveAll(institutions);
+        financialsRepo.saveAll(financials);
     }
 }

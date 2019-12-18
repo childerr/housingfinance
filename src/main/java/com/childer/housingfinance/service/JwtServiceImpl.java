@@ -3,10 +3,8 @@ package com.childer.housingfinance.service;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -15,8 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
 import java.security.Key;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 import java.lang.String;
 
 @Service("jwtService")
@@ -29,9 +26,12 @@ public class JwtServiceImpl implements JwtService {
 
     private static final SignatureAlgorithm SIGNATUREALGORITHM = SignatureAlgorithm.HS256;
     @Override
-    public void generateToken(Map<String, Object> data){
-        Claims claims = Jwts.claims().setSubject(data.get("id").toString());
-        claims.putAll(data);
+    //public void generateToken(Map<String, Object> data){
+    public void generateToken(String id){
+        //Claims claims = Jwts.claims().setSubject(data.get("id").toString());
+        Claims claims = Jwts.claims().setSubject(id);
+        //claims.putAll(data);
+        claims.put("roles", Arrays.asList("USER"));
         Date now = new Date();
         String token = Jwts.builder()
                 .setClaims(claims)
@@ -45,10 +45,11 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public Map<String, Object> getToken() {
+    //public Map<String, Object> getToken() {
+    public Claims getToken() {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         String token = request.getHeader("Authorization");
-        String tokenWithoutBearer = token.replaceFirst("(?i)bearer\\s?token\\s?(.+)", "$1");
+        String tokenWithoutBearer = token.replaceFirst("(?i)bearer\\s?(.+)", "$1");
 
         Claims claims = null;
 
@@ -56,8 +57,8 @@ public class JwtServiceImpl implements JwtService {
             claims = Jwts.parser()
                     .setSigningKey(this.generateKey())
                     .parseClaimsJws(token).getBody();
-            if(!claims.getExpiration().before(new Date()) && !token.equals(tokenWithoutBearer)){
-                generateToken(claims);
+            if(claims.getExpiration().after(new Date()) && !token.equals(tokenWithoutBearer)){
+                generateToken(claims.getSubject());
             }
         }
         return claims;
@@ -69,7 +70,7 @@ public class JwtServiceImpl implements JwtService {
         try {
             Claims claims = (Claims)getToken();
             if(claims != null) {
-                result = claims.getExpiration().before(new Date());
+                result = claims.getExpiration().after(new Date());
             }
         } catch (Exception e) {
 
@@ -79,8 +80,6 @@ public class JwtServiceImpl implements JwtService {
 
     private Key generateKey(){
         Key signingKey = null;
-
-        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
         byte[] keyBytes = DatatypeConverter.parseBase64Binary(tokenKey);
         signingKey = new SecretKeySpec(keyBytes, SIGNATUREALGORITHM.getJcaName());
 

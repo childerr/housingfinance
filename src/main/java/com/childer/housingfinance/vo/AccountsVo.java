@@ -1,5 +1,5 @@
 package com.childer.housingfinance.vo;
-import lombok.Value;
+        import lombok.Value;
 
 @Value
 public class AccountsVo {

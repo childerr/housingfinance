@@ -11,8 +11,6 @@ import org.springframework.util.Assert;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service("accountsService")
 @AllArgsConstructor
@@ -30,10 +28,10 @@ public class AccountsServiceImpl implements AccountsService {
 
         accountsRepo.save(accountsDto.toEntity());
 
-        Map<String, Object> data = new HashMap<String, Object>();
-        data.put("id",accountsDto.getId());
-        data.put("name",accountsDto.getName());
-        jwtService.generateToken(data);
+//        Map<String, Object> data = new HashMap<String, Object>();
+//        data.put("id",accountsDto.getId());
+//        data.put("name",accountsDto.getName());
+        jwtService.generateToken(accountsDto.getId());
     }
 
     @Override
@@ -48,16 +46,17 @@ public class AccountsServiceImpl implements AccountsService {
         boolean isMatched = accounts.getPassword().equals(CustomSecurity.encSHA256(password));
         Assert.isTrue(isMatched, "password not matched.");
 
-        Map<String, Object> data = new HashMap<String, Object>();
-        data.put("id", accounts.getId());
-        data.put("name", accounts.getName());
-        jwtService.generateToken(data);
+//        Map<String, Object> data = new HashMap<String, Object>();
+//        data.put("id", accounts.getId());
+//        data.put("name", accounts.getName());
+        jwtService.generateToken(accounts.getId());
     }
 
     @Override
     public AccountsVo getAccountInfo(String id)
             throws Exception {
-        AccountsVo accountsVo = accountsRepo.findAccountsById(id).orElseThrow(EntityNotFoundException::new);
+
+        AccountsVo accountsVo = accountsRepo.findAccountsById(id).orElse(null);
         return accountsVo;
     }
 }
