@@ -1,79 +1,39 @@
-# 프로젝트명
-> 간략한 프로젝트 소개 문구를 작성합니다.
+# 주택금융서비스API개발
+> JAVA학습관련 주택금융서비스관련 API개발
 
-[![NPM Version][npm-image]][npm-url]
-[![Build Status][travis-image]][travis-url]
-[![Downloads Stats][npm-downloads]][npm-url]
+## 개발 프레임워크
 
-한 두 문단으로 프로젝트 소개 글을 작성합니다.
+Java 1.8
+Spring Boot 2.2.2
+JPA
+Lombok
 
-![](../header.png)
+## 문제해결 전략
+주 사용언어는 Asp.net으로 해당 과제와 같은 규모의 Java 코딩은 최초.
+사전과제 PDF 확인하여, 필요한 기능마다 검색을 통해 구현
 
-## 설치 방법
+기본적으로 회원생성/토큰생성 및 해당 API구현에 필요한 제반사항 관련 구축.
 
-OS X & 리눅스:
+이 후, 금융서비스 관련 API개발.
 
-```sh
-npm install my-crazy-module --save
-```
+공통적이거나 유사한 기능들은 검색을 참고하여 구성.
 
-윈도우:
+금융관련 알고리즘 등의 로직은 직접 구현.
 
-```sh
-edit autoexec.bat
-```
+선택과제인 예측값은 선형회귀로 목표.
+(최소제곱값을 활용한 알고리즘)
 
-## 사용 예제
+최소제곱법(OLD: Odinary Least Squares) 참고.
 
-스크린 샷과 코드 예제를 통해 사용 방법을 자세히 설명합니다.
+검색을 통해 해당 부분 관련하여, 미분/편미분 및 일부 수학서적, 머신러닝 관련 내용 참고
 
-_더 많은 예제와 사용법은 [Wiki][wiki]를 참고하세요._
+PDF상 예시로 준, 국민은행 예측 데이터에 맞춰 만든 알고리즘이 있음.
+하지만, 최소제곱법 규칙을 활용했을 시, 오차발생.
+Y절편의 유무가 아닐지 고민되어, 2개의 API와 Service를 작성해놓음.
+(getPredictionFinancial / getPredictionFinancialNew)
 
-## 개발 환경 설정
+## 빌드 및 환경설정
 
-모든 개발 의존성 설치 방법과 자동 테스트 슈트 실행 방법을 운영체제 별로 작성합니다.
-
-```sh
-make install
-npm test
-```
-
-## 업데이트 내역
-
-* 0.2.1
-    * 수정: 문서 업데이트 (모듈 코드 동일)
-* 0.2.0
-    * 수정: `setDefaultXYZ()` 메서드 제거
-    * 추가: `init()` 메서드 추가
-* 0.1.1
-    * 버그 수정: `baz()` 메서드 호출 시 부팅되지 않는 현상 (@컨트리뷰터 감사합니다!)
-* 0.1.0
-    * 첫 출시
-    * 수정: `foo()` 메서드 네이밍을 `bar()`로 수정
-* 0.0.1
-    * 작업 진행 중
-
-## 정보
-
-이름 – [@트위터 주소](https://twitter.com/dbader_org) – 이메일주소@example.com
-
-XYZ 라이센스를 준수하며 ``LICENSE``에서 자세한 정보를 확인할 수 있습니다.
-
-[https://github.com/yourname/github-link](https://github.com/dbader/)
-
-## 기여 방법
-
-1. (<https://github.com/yourname/yourproject/fork>)을 포크합니다.
-2. (`git checkout -b feature/fooBar`) 명령어로 새 브랜치를 만드세요.
-3. (`git commit -am 'Add some fooBar'`) 명령어로 커밋하세요.
-4. (`git push origin feature/fooBar`) 명령어로 브랜치에 푸시하세요. 
-5. 풀리퀘스트를 보내주세요.
-
-<!-- Markdown link & img dfn's -->
-[npm-image]: https://img.shields.io/npm/v/datadog-metrics.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/datadog-metrics
-[npm-downloads]: https://img.shields.io/npm/dm/datadog-metrics.svg?style=flat-square
-[travis-image]: https://img.shields.io/travis/dbader/node-datadog-metrics/master.svg?style=flat-square
-[travis-url]: https://travis-ci.org/dbader/node-datadog-metrics
-[wiki]: https://github.com/yourname/yourproject/wiki
-
+빌드 툴은 gradle
+DB는 환경에 제약이 없도록, H2 inmemoryDB 사용
+프로젝트 실행 후, Fiddler툴을 통하여 테스트를 진행
