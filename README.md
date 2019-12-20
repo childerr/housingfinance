@@ -24,7 +24,7 @@ Lombok
 선택과제인 예측값은 선형회귀로 목표.
 (최소제곱값을 활용한 알고리즘)
 
-최소제곱법(OLD: Odinary Least Squares) 참고.
+최소제곱법(OLS: Odinary Least Squares) 참고.
 
 검색을 통해 해당 부분 관련하여, 미분/편미분 및 일부 수학서적, 머신러닝 관련 내용 참고
 
